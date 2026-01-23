@@ -179,14 +179,23 @@ class spotiCLI():
     def display_user_playlist(self):
         obj = self.get_playlist_obj()
         playlists = self.get_all_data(obj)
-        total_no_of_playlist = obj["total"]
+        total_no_of_playlist = len(playlists)
         print(f"\nTotal no. of playlists: {total_no_of_playlist}\n")
 
         if(total_no_of_playlist==0):
             return 0
-        for _ in range(total_no_of_playlist):
-            print(f'{str(_+1).zfill(2)}. {playlists[_]["name"]}')
-        return 1
+        
+        GREEN, RESET = "\033[92m", "\033[0m"
+        max_name_length, column_count = 30, 3
+        max_entries_per_column = (total_no_of_playlist+column_count-1)//column_count
+
+        for i in range(max_entries_per_column):
+            line = ""
+            for col in range(column_count):
+                index = i + col * max_entries_per_column
+                if index < total_no_of_playlist:
+                    line += f'{GREEN}{str(index + 1).zfill(2)}. {playlists[index]["name"]:<{max_name_length}}{RESET}' + ' ' * 16
+            print(line)
 
     def track_info(self):
         try:
